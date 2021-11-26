@@ -1,0 +1,78 @@
+name: 'Hoshino Resorts Library Auto Update'
+description: 'Update dependencies automatically with Versions Maven Plugin'
+author: 'HoshinoResort'
+inputs:
+  maven-test-command:
+    description: 'maven command argumetns to execute tests'
+    required: true
+    default: 'test'
+  maven-settings-xml-path:
+    description: 'path to maven settings.xml'
+    required: false
+    default: ''
+  custom-rules-xml-path:
+    description: 'path to custom rules.xml'
+    required: false
+    default: ''
+  display-dependency-updates:
+    description: 'whether run or not with versions:display-dependency-updates'
+    required: false
+    default: 'false'
+  use-cache:
+    description: 'whether cache or not for maven repository'
+    required: true
+    default: 'true'
+  push-on-success:
+    description: 'whether git push or not for the dependency version changes when the test succeeded'
+    required: true
+    default: 'false'
+runs:
+  using: "composite"
+  steps:
+    - name: Cache local Maven repository
+      if: ${{ inputs.use-cache == 'true' }}
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - id: main
+      name: Update dependencies with Versions Maven Plugin
+      run: |
+        source ${{ github.action_path }}/functions.sh
+
+        if [[ -n "${{ inputs.maven-settings-xml-path }}" ]]; then
+          set_settings_xml "${{ inputs.maven-settings-xml-path }}"
+        fi
+
+        mvnw_version
+
+        if [[ -z "${{ inputs.custom-rules-xml-path }}" ]]; then
+          set_rules_xml "${{ github.action_path }}/rules.xml"
+        else
+          set_rules_xml "${{ github.workspace }}/${{ inputs.custom-rules-xml-path }}"
+        fi
+
+        if [[ "${{ inputs.display-dependency-updates }}" == "true" ]]; then
+          run_mvnw "versions:display-dependency-updates"
+        fi
+
+        mvnw_latest_releases
+
+        if [[ $(has_modified_poms) != "true" ]]; then
+          info "no update for dependencies"
+          exit 0
+        fi
+
+        run_mvnw "clean"
+        run_mvnw ${{ inputs.maven-test-command }}
+
+        if [[ "${{ inputs.push-on-success }}" == "true" ]]; then
+          configure_system_account
+          commit_pom_xml
+          push_to_remote
+        fi
+
+        success "Auto update process was completed"
+      shell: bash
