@@ -26,7 +26,7 @@
 
 ```yml
 - name: Update library versions
-  uses: HoshinoResort/hr-library-auto-update@init-dev
+  uses: HoshinoResort/hr-library-auto-update@v1
   with:
     # maven コマンドで実行するテスト向けのコマンドを指定する
     # デフォルト: test
