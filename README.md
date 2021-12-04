@@ -47,15 +47,24 @@
     # デフォルト: 'false'
     display-dependency-updates: ''
 
-    # GitHub Actions が提供するビルドキャッシュを利用するかどうか
+    # GitHub Actions が提供するビルドキャッシュ (actions/cache) を利用するかどうか
     # ビルドキャッシュを利用することでバージョンチェックの処理を高速化できる
     # デフォルト: 'true'
     use-cache: ''
+
+    # GitHub Actions が提供するビルドキャッシュ (actions/cache) に渡すパス
+    # キャッシュの除外設定に利用することを想定している
+    # デフォルト: 未使用
+    custom-cache-path: ''
 
     # テストコマンドが成功したときにバージョンの更新をリポジトリに反映するかどうか
     # バージョンのアップデートがあるかどうかをチェックしたいだけなら無効でよい
     # デフォルト: 'false'
     push-on-success: ''
+
+    # デバッグ用途に冗長モードを有効にするかどうか
+    # デフォルト: 'false'
+    verbose: ''
 ```
 
 ### 呼び出し側の設定例
@@ -66,8 +75,11 @@
   with:
     maven-test-command: "test -DfailIfNoTests=false -Dtest='!IntegrationTest'"
     maven-settings-xml-path: "${{ github.workspace }}/settings.xml"
+    custom-cache-path: '!~/.m2/repository/com'
     push-on-success: 'true'
 ```
+
+`custom-cache-path` は [actions/cache](https://github.com/actions/cache) に渡す `path` を記述します。`!` を使うことでキャッシュ対象から除外できます。この例では `~/.m2/repository/com` 配下のディレクトリをすべてキャッシュしない設定になります。
 
 リポジトリに push するには GITHUB_TOKEN や permissions といった認証情報を適切に設定する必要があります。
 
