@@ -42,7 +42,7 @@ runs:
       uses: actions/cache@v2
       with:
         path: |
-          ~/.m2/repository/*
+          ~/.m2/repository/*/*
           ${{ inputs.custom-cache-path }}
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |

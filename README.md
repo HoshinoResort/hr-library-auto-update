@@ -75,11 +75,11 @@
   with:
     maven-test-command: "test -DfailIfNoTests=false -Dtest='!IntegrationTest'"
     maven-settings-xml-path: "${{ github.workspace }}/settings.xml"
-    custom-cache-path: '!~/.m2/repository/com'
+    custom-cache-path: '!~/.m2/repository/com/subdomain'
     push-on-success: 'true'
 ```
 
-`custom-cache-path` は [actions/cache](https://github.com/actions/cache) に渡す `path` を記述します。`!` を使うことでキャッシュ対象から除外できます。この例では `~/.m2/repository/com` 配下のディレクトリをすべてキャッシュしない設定になります。
+`custom-cache-path` は [actions/cache](https://github.com/actions/cache) に渡す `path` を記述します。`!` を使うことでキャッシュ対象から除外できます。この例では `~/.m2/repository/com/subdomain` 配下のディレクトリをすべてキャッシュしない設定になります。
 
 リポジトリに push するには GITHUB_TOKEN や permissions といった認証情報を適切に設定する必要があります。
 
