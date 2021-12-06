@@ -22,9 +22,17 @@ inputs:
     description: 'whether cache or not for maven repository'
     required: true
     default: 'true'
+  custom-cache-path:
+    description: 'any (exclude) path patterns for actions/cache'
+    required: false
+    default: ''
   push-on-success:
     description: 'whether git push or not for the dependency version changes when the test succeeded'
     required: true
+    default: 'false'
+  verbose:
+    description: 'whether enable verbose mode, use for debugging'
+    required: false
     default: 'false'
 runs:
   using: "composite"
@@ -33,7 +41,9 @@ runs:
       if: ${{ inputs.use-cache == 'true' }}
       uses: actions/cache@v2
       with:
-        path: ~/.m2/repository
+        path: |
+          ~/.m2/repository/*/*
+          ${{ inputs.custom-cache-path }}
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
@@ -41,6 +51,11 @@ runs:
       name: Update dependencies with Versions Maven Plugin
       run: |
         source ${{ github.action_path }}/functions.sh
+
+        if [[ "${{ inputs.verbose }}" == "true" ]]; then
+          echo "show the cached repository"
+          sh -c "ls -laR ~/.m2/; exit 0"
+        fi
 
         if [[ -n "${{ inputs.maven-settings-xml-path }}" ]]; then
           set_settings_xml "${{ inputs.maven-settings-xml-path }}"
