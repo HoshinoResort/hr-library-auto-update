@@ -100,6 +100,9 @@ jobs:
 
 ## FAQ
 
+* バージョンチェック処理に時間がかかって CI が遅くなってしまう
+  * [Maven Settings](https://maven.apache.org/ref/current/maven-settings/settings.html) の updatePolicy でバージョンチェックの頻度を設定できます (デフォルトは日次)
+  * 通常の CI に組み込みたくない場合は [action をスケジュール実行](https://docs.github.com/ja/actions/using-workflows/events-that-trigger-workflows#schedule) するとよいでしょう
 * 最新のメジャーバージョンにアップデートしません
   * 事故を防ぐ意図で `allowMajorUpdates=false` で防止しています
   * メジャーバージョンを上げたいときは手動でプロジェクトの `pom.xml` のバージョンを更新してください
