@@ -34,6 +34,13 @@ inputs:
     description: 'whether enable verbose mode, use for debugging'
     required: false
     default: 'false'
+outputs:
+  has-updates:
+    description: 'whether library updates exists or not'
+    value: ${{ steps.main.outputs.has-updates }}
+  revision:
+    description: 'git revision when the change would push'
+    value: ${{ steps.main.outputs.revision }}
 runs:
   using: "composite"
   steps:
@@ -77,8 +84,10 @@ runs:
 
         if [[ $(has_modified_poms) != "true" ]]; then
           info "no update for dependencies"
+          echo "::set-output name=has-updates::false"
           exit 0
         fi
+        echo "::set-output name=has-updates::true"
 
         run_mvnw "clean"
         run_mvnw ${{ inputs.maven-test-command }}
@@ -87,6 +96,7 @@ runs:
           configure_system_account
           commit_pom_xml
           push_to_remote
+          echo "::set-output name=revision::$(get_head_revision)"
         fi
 
         success "Auto update process was completed"

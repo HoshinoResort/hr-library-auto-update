@@ -146,6 +146,10 @@ function push_to_remote() {
     run git push origin
 }
 
+function get_head_revision() {
+    git rev-parse HEAD
+}
+
 ################################
 ## from here for testing
 ################################
