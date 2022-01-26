@@ -71,6 +71,7 @@
 
 ```yml
 - name: Update library versions
+  id: updates
   uses: HoshinoResort/hr-library-auto-update@v1
   with:
     maven-test-command: "test -DfailIfNoTests=false -Dtest='!IntegrationTest'"
@@ -80,6 +81,21 @@
 ```
 
 `custom-cache-path` は [actions/cache](https://github.com/actions/cache) に渡す `path` を記述します。`!` を使うことでキャッシュ対象から除外できます。この例では `~/.m2/repository/com/subdomain` 配下のディレクトリをすべてキャッシュしない設定になります。除外設定には [actions/toolkit/issues/713](https://github.com/actions/toolkit/issues/713#issuecomment-850321461) で報告されている課題があり、`~/.m2/repository/第1階層/第2階層` のように2階層にあわせて指定する必要があります。
+
+依存ライブラリの更新有無やリポジトリにコミットしたリビジョン番号を知りたいときは outputs から取得できます。
+
+```yml
+- run: |
+    echo "has-updates: ${{ steps.updates.outputs.has-updates }}"
+    echo "revision: ${{ steps.updates.outputs.revision }}"
+```
+
+* outputs の出力例
+
+```
+has-updates: true
+revision: a712589a48e6c35924ba9e456e4fd192ce4de48e
+```
 
 リポジトリに push するには GITHUB_TOKEN や permissions といった認証情報を適切に設定する必要があります。
 
