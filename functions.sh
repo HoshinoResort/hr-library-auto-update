@@ -131,10 +131,16 @@ function configure_system_account() {
     run git config --global user.name "$USER_NAME"
 }
 
-function commit_pom_xml() {
+function show_pom_diff() {
     local files=$(get_modified_poms)
     if [[ -n "$files" ]]; then
         run git diff $files
+    fi
+}
+
+function commit_pom_xml() {
+    local files=$(get_modified_poms)
+    if [[ -n "$files" ]]; then
         run git add $files
         run git commit -m "\"update dependencies\""
     else
