@@ -20,5 +20,11 @@
                 <ignoreVersion type="regex">.*[-_\.]RC[0-9]+</ignoreVersion>
             </ignoreVersions>
         </rule>
+        <rule groupId="org.junit">
+            <ignoreVersions>
+                <ignoreVersion type="regex">.*[-_\.]M[0-9]+</ignoreVersion>
+                <ignoreVersion type="regex">.*[-_\.]RC[0-9]+</ignoreVersion>
+            </ignoreVersions>
+        </rule>
     </rules>
 </ruleset>
