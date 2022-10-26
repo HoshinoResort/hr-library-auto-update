@@ -84,10 +84,10 @@ runs:
 
         if [[ $(has_modified_poms) != "true" ]]; then
           info "no update for dependencies"
-          echo "::set-output name=has-updates::false"
+          echo "has-updates=false" >> $GITHUB_OUTPUT
           exit 0
         fi
-        echo "::set-output name=has-updates::true"
+        echo "has-updates=true" >> $GITHUB_OUTPUT
         show_pom_diff
 
         run_mvnw "clean"
@@ -97,7 +97,7 @@ runs:
           configure_system_account
           commit_pom_xml
           push_to_remote
-          echo "::set-output name=revision::$(get_head_revision)"
+          echo "revision=$(get_head_revision)" >> $GITHUB_OUTPUT
         fi
 
         success "Auto update process was completed"
